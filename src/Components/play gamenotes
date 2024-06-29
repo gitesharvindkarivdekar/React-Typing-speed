@@ -1,0 +1,139 @@
+import React, { useEffect, useState } from 'react'
+
+
+const PlayGame = ({ onChangeScore }) => {
+
+    //need to create the random paragraph to use the game 
+    //in default data we have to store the sample data
+    const [defaultData] = useState('The sun was setting over the horizon, casting a golden glow over the tranquil ocean. Waves gently lapped against the shore, creating a soothing symphony of nature. As the day turned to night, the sky transformed into a canvas of brilliant colors, painting a picture of serenity and peace On the sandy beach, a family gathered around a bonfire, roasting marshmallows and sharing stories. Laughter filled the air as children chased each other, their footprints leaving temporary imprints on the soft sand. The warmth of the fire and the company of loved ones made the moment perfect In the distance, a lighthouse stood tall, its beacon guiding sailors safely to shore. The rhythmic flash of its light was a reminder of the enduring hope and guidance in lifes journey. As the stars began to twinkle in the night sky, a sense of wonder and gratitude enveloped everyone present.The simple joys of life, the beauty of nature, and the bonds of family and friends create memories that last a lifetime. These moments, though fleeting, leave an indelible mark on our hearts, reminding us of the importance of cherishing each day.')
+
+    //datatyping will contain randomly filtered text 
+    const [datatyping, setdatatyping] = useState([]);
+
+
+    //this will test the player is typing and it will compare the text position
+    const [textTyping, setTextTyping] = useState({
+        value: '',
+        position: 0,
+    });
+
+    const [timeLeft, setTimeLeft] = useState(60);
+    const [wpm, setWpm] = useState(0);
+    //Now when the playgame components gets loaded I will create a function to generate random paragraphs using the bounce method.
+
+    useEffect(() => {
+        const addword = (quantity = 20) => { //this is because the number of random words i want to generate is 20 convert defaultData to array using split
+            const arrayDefaultDB = defaultData.split(' ');
+            const datatypingtest = [];
+
+            for (let index = 0; index < quantity; index++) {
+                const position = Math.floor(Math.random() * arrayDefaultDB.length);
+                datatypingtest.push({
+                    value: arrayDefaultDB[position],
+                    status: null
+                })
+
+            }
+            setdatatyping(datatypingtest);//suppose if the user has type the word and is correct, the  setdatatyping status will be true and vice versa
+
+        }
+        //so this addword function only runs when the datatyping will not have any elements 
+        if (datatyping.length === 0 || textTyping.position >= datatyping.length) {
+            addword();
+            setTextTyping({ ...textTyping, position: 0 })
+        }
+    }, [textTyping.position, defaultData, datatyping.length])
+
+
+    useEffect(() => {
+        if (timeLeft > 0) {
+            const timer = setInterval(() => {
+                setTimeLeft(timeLeft - 1);
+            }, 1000);
+            return () => clearInterval(timer);
+        } else {
+            setWpm(Math.floor((textTyping.position / (60 - timeLeft)) * 60));
+        }
+    }, [timeLeft]);
+
+    const handleChangeTyping = e => { //value input the user 
+        const valueInput = e.target.value;
+        //if the content that the user is entering does not contain a space
+        if (!valueInput.includes(' ')) {
+            setTextTyping({
+                ...textTyping,
+                value: valueInput
+            })
+        }
+        //else if the user enters the space
+        else if (textTyping.value !== '') {
+            checkresult();
+        }
+
+
+
+    }
+
+    const checkresult = () => {
+        const dataCheck = datatyping;
+        const wordCheck = dataCheck[textTyping.position].value;
+
+        if (textTyping.value === wordCheck) {
+            dataCheck[textTyping.position].status = true
+            onChangeScore('right')
+        }
+
+        else {
+            dataCheck[textTyping.position].status = false
+            onChangeScore('wrong')
+
+        }
+        setdatatyping(dataCheck);
+
+
+        //After checking, I want to delete the content that the user previously entered in the input  and increase position by 1 unit to continue 
+        //with the next text. Now lets try, I enter the text and press distance, it has checked and returned the results 
+
+        setTextTyping({
+            value: '',
+            position: textTyping.position + 1
+        })
+    }
+    console.log(datatyping);
+
+
+    return (
+        <div className="playing">
+            <div className="stats">
+                <div>Time Left: {timeLeft}s</div>
+                <div>WPM: {wpm}</div>
+            </div>
+            <ul className='list'>
+                {
+                    datatyping.map((word, index) =>
+                        <li key={index}
+                            className={
+                                word.status === true
+                                    ? 'true'
+                                    : word.status === false
+                                        ? 'false'
+                                        : ''
+                            }>
+                            {
+                                word.value
+                            }
+                        </li>)
+                }
+            </ul>
+
+            <div className="inputForm">
+                <input type="text" value={textTyping.value}
+                    onChange={handleChangeTyping} />
+            </div>
+        </div>
+    )
+}
+
+
+
+export default PlayGame

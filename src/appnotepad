@@ -1,0 +1,83 @@
+import React, { useEffect, useState } from 'react'
+import Home from './Components/Home'
+import PlayGame from './Components/PlayGame'
+import EndGame from './Components/EndGame'
+import './App.css'
+
+function App() {
+
+  // now create the state gameStatus to manage the game status -------------step 1
+
+  const[statusGame,setstatusGame]=useState(null);
+
+  // To calculate points when playing the game, I will create a score variable to store ---------------step 4
+  const[score,setscore]=useState(null);
+
+  //when the system detects that the value of game status has changed and it will check if the value is equal to play game---------step 5
+  useEffect(()=>{
+    if(statusGame==='playgame'){ // //it means the game will be started
+      setscore({
+        right:0,
+        wrong:0
+      })
+
+      const timeOutGame=setTimeout(()=>{
+        setstatusGame('endgame')
+      },60000)
+      return ()=> clearTimeout(timeOutGame)
+
+    }
+
+    
+},[statusGame])
+
+
+// create a function  called handlechangessatusgame() that allows users to change the value of the status --------------------step 3
+const handleChangeScore=(type)=>{
+  if(type==='right'){
+    setscore({
+      ...score,
+      right:score.right+1
+
+    })
+  }
+  else{
+    setscore({
+      ...score,
+      wrong:score.wrong+1
+    })
+  }
+}
+
+
+  const handleChangeStatusGame = (status)=>{
+    setstatusGame(status);
+
+  }
+
+  //use switch case to control which components are displayed -------------step 2
+  // let layout;
+  let layout;
+  switch (statusGame) {
+    case 'playgame':
+      layout = <PlayGame onChangeScore={handleChangeScore}/> // I have put the function into the playgame component to easily control
+      break;
+
+      case 'endgame':
+        layout=<EndGame score={score} onGame={handleChangeStatusGame}/>
+        break;
+  
+    default:
+      layout=<Home onGame={handleChangeStatusGame}/>
+      break;
+  }
+
+
+  return (
+    <div className='App'>
+      {layout}
+    </div>
+  )
+}
+
+export default App

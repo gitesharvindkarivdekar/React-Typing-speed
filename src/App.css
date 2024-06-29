@@ -1,38 +1,147 @@
-.App {
-  text-align: center;
+*{
+  margin:0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.App{
+  background: radial-gradient(#3d3d42,#191a1f);
+  height: 100vh;
+  font-family:Poppins;
+  color: #eee;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+}
+
+.home .title{
+  font-size: 80px;
+  text-shadow: 0 10px 10px #000;
+}
+
+.btnPlay{
+  display: block;
+  margin: 20px auto;
+  background-color: #191a21;
   color: white;
+  padding: 5px 10px;
+  font-size: large;
+  letter-spacing: 5px;
+  box-shadow: 0 10px 10px #0005;
 }
 
-.App-link {
-  color: #61dafb;
+@keyframes showHome{
+  to{
+    opacity: 1;
+  }
+
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.home{
+  opacity: 0;
+  animation: showHome 2s .3s ease-in-out 1 forwards;
+}
+
+.playing{
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 70% 1fr;
+  padding: 50px;
+  text-align: center;
+  gap: 10px;
+  opacity: 0;
+  animation: showHome 1s ease-in-out 1 forwards;
+}
+
+.playing .list{
+  /* margin-top: 60px; */
+  padding: 30px;
+  list-style: none;
+  text-align: left;
+  background-image: linear-gradient(
+    45deg, #5556a0, #ab84b4
+  );
+  border-radius: 20px;
+  box-shadow: 0 2px 0 #fff;
+
+}
+
+.playing li{
+  display: inline-block;
+  font-size: x-large;
+  padding: 10px;
+  text-shadow: 0 2px 2px #0009;
+  position: relative;
+}
+
+.playing input{
+  width: 100%;
+  padding: 20px 0;
+  outline: none;
+  text-align: center;
+  font-size: x-large;
+  background-color: #0005;
+  border: none;
+  color: #fff;
+  border-radius: 20px;
+  font-family: Poppins;
+}
+
+.playing li.true{
+  color: greenyellow;
+}
+
+.playing li.false{
+  color: red;
+}
+
+.playing li.true::after,
+.playing li.false::after{
+  position:absolute;
+  inset: 0 0 0 0;
+  content: '+1';
+  text-align: center;
+  animation: showPoint .5s linear 1 forwards;
+}
+
+.playing li.false::after{
+  content: '-1';
+}
+
+@keyframes showPoint{
+  0%{
+    opacity: 0;
   }
-  to {
-    transform: rotate(360deg);
+  50%{
+    opacity: 1;
   }
+  100%{
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+}
+
+.endGame{
+  opacity: 0;
+  animation: showHome 1s .3s ease-in-out 1 forwards
+}
+
+.endGame .results{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:50px;
+  text-align: center;
+  font-size: 20px;
+  text-shadow: 0 10px 10px #000;
+}
+
+.endGame .number{
+  font-size: 50px;
+}
+
+.timer {
+  font-size: 30px;
+  font-weight: bold;
+  color: #000;
+  text-align: center;
 }
