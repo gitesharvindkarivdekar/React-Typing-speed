@@ -9,7 +9,7 @@ function TrophyIcon() {
   );
 }
 
-export default function Leaderboard({ entries, highlightId, onBack, backLabel = 'Back' }) {
+export default function Leaderboard({ entries, storageError, highlightId, onBack, backLabel = 'Back' }) {
   return (
     <div className='leaderboardPage'>
       <section className='card' aria-labelledby='lb-title'>
@@ -25,7 +25,7 @@ export default function Leaderboard({ entries, highlightId, onBack, backLabel = 
         ) : (
           <div className='lbWrap'>
             <table className='lbTable'>
-              <caption className='sr-only'>Top {MAX_ENTRIES} typing results this session</caption>
+              <caption className='sr-only'>Top {MAX_ENTRIES} typing results saved in this browser</caption>
               <thead>
                 <tr><th scope='col'>Rank</th><th scope='col'>Player</th><th scope='col'>WPM</th><th scope='col'>Accuracy</th><th scope='col' className='hideSm'>Right</th><th scope='col' className='hideSm'>Wrong</th></tr>
               </thead>
@@ -45,7 +45,8 @@ export default function Leaderboard({ entries, highlightId, onBack, backLabel = 
           </div>
         )}
 
-        <p className='note'>This leaderboard lives only in this browser tab. It resets when you reload the page and isn’t shared with other players or devices.</p>
+        <p className='note'>Your top scores are saved in this browser and stay after refresh. They aren’t shared with other players or devices.</p>
+        {storageError && <p className='formError' role='alert'>{storageError}</p>}
         <button type='button' className='btnSecondary' onClick={onBack}>{backLabel}</button>
       </section>
     </div>

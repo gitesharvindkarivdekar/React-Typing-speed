@@ -4,7 +4,7 @@ import PlayGame from './Components/PlayGame'
 import EndGame from './Components/EndGame'
 import Leaderboard from './Components/Leaderboard'
 import { GAME_SECONDS, computeStats } from './utils/stats'
-import { addResult } from './utils/leaderboard'
+import { addResult, loadResults, saveResults } from './utils/leaderboard'
 import './App.css'
 
 function App() {
@@ -18,13 +18,25 @@ function App() {
   const [score, setScore] = useState(null);
   const [timeLeft, setTimeLeft] = useState(GAME_SECONDS); // Timer state
 
-  // NEW: player name, session-only leaderboard (in-memory React state, max 10 entries)
+  // The leaderboard is stored in this browser and limited to the top 10 entries.
   const [playerName, setPlayerName] = useState('');
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [savedLeaderboard] = useState(loadResults);
+  const [leaderboard, setLeaderboard] = useState(savedLeaderboard.entries);
+  const [leaderboardStorageError, setLeaderboardStorageError] = useState(savedLeaderboard.error);
   const [lastEntryId, setLastEntryId] = useState(null); // the entry created by the round just played
   const [roundId, setRoundId] = useState(0);            // increments every time a round starts
   const recordedRound = useRef(0);                      // guards against recording one round twice
   const leaderboardReturn = useRef(null);               // which screen "Back" returns to
+
+  useEffect(() => {
+    try {
+      saveResults(leaderboard);
+      setLeaderboardStorageError('');
+    } catch (error) {
+      console.error('Unable to save the leaderboard in this browser.', error);
+      setLeaderboardStorageError('Scores could not be saved in this browser. Check your browser storage settings.');
+    }
+  }, [leaderboard]);
 
 
     //when the system detects that the value of game status has changed and it will check if the value is equal to play game---------step 5
@@ -134,6 +146,7 @@ function App() {
       layout = (
         <Leaderboard
           entries={leaderboard}
+          storageError={leaderboardStorageError}
           highlightId={lastEntryId}
           onBack={handleBackFromLeaderboard}
           backLabel={leaderboardReturn.current === 'endgame' ? 'Back to my scorecard' : 'Back to start'}
