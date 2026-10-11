@@ -8,7 +8,10 @@ export function validatePlayerName(raw = '') {
   if (!name) return { valid: false, name: '', message: 'Please enter your name to start the game.' };
   if (name.length < MIN_NAME_LENGTH) return { valid: false, name, message: `Your name needs at least ${MIN_NAME_LENGTH} characters.` };
   if (name.length > MAX_NAME_LENGTH) return { valid: false, name, message: `Please keep your name to ${MAX_NAME_LENGTH} characters or fewer.` };
-  if (/[<>\u0000-\u001F\u007F]/.test(name)) return { valid: false, name, message: 'Names can’t contain < > or control characters.' };
+  if (name.includes('<') || name.includes('>') || name.split('').some((character) => {
+    const code = character.charCodeAt(0);
+    return code <= 0x1f || code === 0x7f;
+  })) return { valid: false, name, message: 'Names can’t contain < > or control characters.' };
   return { valid: true, name, message: '' };
 }
 
