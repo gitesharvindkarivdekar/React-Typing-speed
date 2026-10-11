@@ -6,7 +6,7 @@
 
 .App{
   background: radial-gradient(#3d3d42,#191a1f);
-  height: 100vh;
+  min-height: 100vh; /* was height: 100vh — lets the landing page / scorecard grow on small screens */
   font-family:Poppins;
   color: #eee;
   display: flex;
@@ -15,8 +15,9 @@
 }
 
 .home .title{
-  font-size: 80px;
+  font-size: clamp(2.8rem, 6vw, 80px); /* 80px on desktop, scales down on phones */
   text-shadow: 0 10px 10px #000;
+  line-height: 1.1;
 }
 
 .btnPlay{
@@ -28,6 +29,7 @@
   font-size: large;
   letter-spacing: 5px;
   box-shadow: 0 10px 10px #0005;
+  cursor: pointer;
 }
 
 @keyframes showHome{
@@ -87,6 +89,17 @@
   font-family: Poppins;
 }
 
+/* "Start typing here..." hint (the text itself is the placeholder attribute in PlayGame.js) */
+.playing input::placeholder{
+  color: #c9c9d6;
+  opacity: 1;
+  letter-spacing: 1px;
+}
+
+.playing input:focus-visible{
+  box-shadow: 0 0 0 3px #cfa9e6;
+}
+
 .playing li.true{
   color: greenyellow;
 }
@@ -144,4 +157,126 @@
   font-weight: bold;
   color: #000;
   text-align: center;
+}
+
+/* =====================================================================
+   NEW — everything below is added for the landing page, scorecard,
+   leaderboard and contact form. Existing rules above are unchanged
+   (except the three marked tweaks: .App min-height, .home .title size,
+   .btnPlay cursor).
+   ===================================================================== */
+
+:focus-visible{ outline: 3px solid #cfa9e6; outline-offset: 3px; }
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.muted{ color:#c4c4d0; line-height:1.55; }
+
+/* ---------- Landing page ---------- */
+.home{ width:100%; max-width:960px; padding:32px 20px; }
+.homeLayout{ display:flex; flex-direction:column; align-items:center; gap:28px; text-align:center; }
+.profilePhoto{
+  --size: clamp(150px, 40vw, 220px);
+  width:var(--size); height:var(--size); flex:none; padding:5px; border-radius:50%;
+  background: linear-gradient(135deg, #5556a0, #ab84b4);
+  box-shadow: 0 14px 30px #0008;
+}
+.profilePhoto img, .photoFallback{
+  width:100%; height:100%; border-radius:50%; object-fit:cover; object-position:50% 15%;
+  background:#191a21; display:grid; place-items:center; font-size:2.5rem; letter-spacing:2px;
+}
+.homeContent{ width:100%; max-width:600px; }
+.credit{ margin-top:8px; line-height:1.4; }
+.nameForm{ margin-top:26px; text-align:left; }
+.nameForm label, .field label{ display:block; margin-bottom:8px; font-size:1rem; }
+.nameForm input, .field input, .field textarea{
+  width:100%; padding:14px 16px; font:inherit; font-size:1.1rem; color:#fff;
+  background:#0006; border:1px solid #ffffff44; border-radius:12px;
+}
+.nameForm input::placeholder, .field input::placeholder, .field textarea::placeholder{ color:#bdbdca; opacity:1; }
+.nameForm input:focus-visible, .field input:focus-visible, .field textarea:focus-visible{ outline:3px solid #cfa9e6; outline-offset:2px; }
+.nameForm input[aria-invalid='true'], .field input[aria-invalid='true'], .field textarea[aria-invalid='true']{ border-color:#ff9d9d; }
+.fieldMsg{ margin-top:6px; min-height:1.4em; font-size:.9rem; color:#c4c4d0; }
+.fieldMsg.error{ color:#ff9d9d; }
+.btnPlay.is-disabled{ opacity:.55; cursor:not-allowed; }
+.btnPlay:disabled{ opacity:.7; cursor:progress; }
+.nameForm .btnPlay{ margin:18px auto 8px; }
+.btnSecondary{
+  background:transparent; color:#fff; border:1px solid #ffffff88; padding:5px 10px;
+  font-size:large; letter-spacing:2px; cursor:pointer; box-shadow:0 10px 10px #0005;
+}
+.btnSecondary:hover, .btnPlay:hover{ border-color:#cfa9e6; }
+.linkBtn{
+  display:block; margin:10px auto 0; background:none; border:none; color:#d9bff0;
+  font:inherit; text-decoration:underline; cursor:pointer; padding:8px;
+}
+.linkBtn:hover{ color:#fff; }
+@media (min-width:860px){
+  .homeLayout{ flex-direction:row; justify-content:center; gap:64px; text-align:left; }
+  .credit{ text-align:left; }
+}
+@media (max-width:859px){ .credit{ text-align:center; } .nameForm{ max-width:440px; margin-inline:auto; } }
+
+/* ---------- Cards (scorecard, connect, leaderboard) ---------- */
+.card{
+  background:#191a2199; border:1px solid #ffffff22; border-top:4px solid #ab84b4;
+  border-radius:20px; padding:28px; box-shadow:0 14px 30px #0006; backdrop-filter: blur(4px);
+}
+.card h2{ font-size:clamp(1.5rem, 4vw, 2rem); margin-bottom:10px; }
+
+/* ---------- Scorecard ---------- */
+.endGame{ width:100%; max-width:760px; padding:32px 16px; display:grid; gap:28px; }
+.scorecard{ text-align:center; }
+.eyebrow{ text-transform:uppercase; letter-spacing:3px; font-size:.8rem; color:#d9bff0; margin-bottom:6px; }
+.rankLine{ margin-bottom:18px; color:#e6e6ee; }
+.heroStat{ display:flex; flex-direction:column; align-items:center; margin-bottom:20px; }
+.label{ font-size:1rem; color:#c4c4d0; }
+.heroStat .number{ font-size:clamp(4rem, 14vw, 6.5rem); line-height:1; color:greenyellow; text-shadow:0 10px 10px #000; }
+.endGame .results{ gap:16px; margin-bottom:8px; }
+.stat{ display:flex; flex-direction:column; align-items:center; padding:14px 8px; background:#0004; border-radius:14px; }
+.endGame .stat .number{ font-size:clamp(1.8rem, 6vw, 2.6rem); }
+.actions{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px 16px; margin-top:12px; }
+.actions .btnPlay, .actions .btnSecondary{ margin:8px 0; }
+
+/* ---------- Connect + contact form ---------- */
+.connect .muted{ margin-bottom:16px; }
+.linkedinLink{
+  display:inline-flex; align-items:center; gap:10px; padding:10px 18px; margin-bottom:22px;
+  color:#fff; text-decoration:none; background:#0a66c2; border-radius:999px; font-weight:600;
+}
+.linkedinLink:hover{ background:#0d7ae6; }
+.contactForm{ display:grid; gap:14px; text-align:left; }
+.field textarea{ resize:vertical; min-height:120px; }
+.counter{ text-align:right; font-size:.8rem; color:#c4c4d0; margin-top:-8px; }
+.hp{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+.formStatus{ min-height:1.2em; color:#d9bff0; font-size:.95rem; }
+.formError{ color:#ff9d9d; background:#ff9d9d1a; border:1px solid #ff9d9d66; border-radius:12px; padding:12px 14px; }
+.sendBtn{ margin:6px auto 0; }
+.formDone{ text-align:center; padding:18px; background:#adff2f14; border:1px solid #adff2f55; border-radius:14px; }
+.formDone .btnSecondary{ margin-top:14px; }
+
+/* ---------- Leaderboard ---------- */
+.leaderboardPage{ width:100%; max-width:760px; padding:32px 16px; }
+.leaderboardPage .muted{ margin-bottom:18px; }
+.lbWrap{ overflow-x:auto; margin-bottom:18px; }
+.lbTable{ width:100%; border-collapse:collapse; text-align:left; }
+.lbTable th, .lbTable td{ padding:12px 10px; border-bottom:1px solid #ffffff1f; }
+.lbTable thead th{ font-size:.85rem; letter-spacing:1px; text-transform:uppercase; color:#d9bff0; }
+.lbTable .num{ text-align:right; font-variant-numeric:tabular-nums; }
+.lbTable thead th:nth-child(n+3){ text-align:right; }
+.lbName{ font-weight:600; overflow-wrap:anywhere; }
+.lbTable tr.me{ background:#ab84b433; }
+.youTag{ color:greenyellow; font-weight:400; font-size:.85rem; }
+.rankBadge{ display:inline-grid; place-items:center; width:30px; height:30px; border-radius:50%; background:#ffffff1f; font-weight:700; }
+.rankBadge.r1{ background:#f5c542; color:#1b1b1b; } .rankBadge.r2{ background:#cfd3da; color:#1b1b1b; } .rankBadge.r3{ background:#d98f52; color:#1b1b1b; }
+.lbEmpty{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:34px 12px; text-align:center; border:2px dashed #ffffff33; border-radius:16px; margin-bottom:18px; color:#d9bff0; }
+.lbEmpty p{ color:#eee; } .lbEmpty .muted{ margin:0; color:#c4c4d0; }
+.note{ font-size:.85rem; color:#c4c4d0; margin-bottom:6px; }
+.leaderboardPage .btnSecondary{ display:block; margin:16px auto 0; }
+@media (max-width:560px){
+  .hideSm{ display:none; }
+  .card{ padding:20px 16px; }
+  .lbTable th, .lbTable td{ padding:10px 6px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .home, .endGame, .playing{ animation-duration:.01ms; animation-delay:0s; }
 }
